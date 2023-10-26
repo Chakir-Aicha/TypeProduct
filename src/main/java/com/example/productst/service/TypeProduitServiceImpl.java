@@ -32,6 +32,7 @@ public class TypeProduitServiceImpl implements TypeProduitService{
             createTableSQL.append(caract.
                     getNom() + " " + caract.getTypeDonnees() + ",");
         }
+        createTableSQL.append("typeProduit_id INT, FOREIGN KEY (typeProduit_id) REFERENCES type_produit(id),");
 
         createTableSQL.deleteCharAt(createTableSQL.length() - 1); // Supprimez la virgule en trop
         createTableSQL.append(")");
