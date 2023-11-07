@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 @Service
 public class TypeProduitServiceImpl implements TypeProduitService{
@@ -46,17 +49,18 @@ public class TypeProduitServiceImpl implements TypeProduitService{
        List<TypeProduit> AllTypes= typeProduitRepository.findAll();
        return AllTypes;
     }
-    public List<String> getTableColumns(String productType) {
+    public List<String> getTableColumns(String databaseName, String productType) {
         try {
-            // Utilisez la requête SQL pour obtenir les noms des colonnes de la table
-            String query = "SELECT column_name FROM information_schema.columns WHERE table_name = ?";
-            List<String> columns = jdbcTemplate.queryForList(query, new Object[]{productType}, String.class);
+            // Use the SQL query to fetch the names of columns for the specified table in the specified database
+            String query = "SELECT column_name FROM information_schema.columns WHERE table_schema = ? AND table_name = ?";
+            List<String> columns = jdbcTemplate.queryForList(query, new Object[]{databaseName, productType}, String.class);
             return columns;
         } catch (DataAccessException ex) {
-            // Gérez les exceptions ou enregistrez les erreurs selon vos besoins
-            throw new RuntimeException("Failed to retrieve columns for table " + productType, ex);
+            // Handle exceptions or log errors as needed
+            throw new RuntimeException("Failed to retrieve columns for table " + productType + " in database " + databaseName, ex);
         }
     }
+
 
     @Override
     public int getId(String productType) {
@@ -75,5 +79,8 @@ public class TypeProduitServiceImpl implements TypeProduitService{
             throw new RuntimeException("Failed to retrieve the id for product type: " + productType, ex);
         }
     }
+    //-----------------------------------
+
+
 
 }
